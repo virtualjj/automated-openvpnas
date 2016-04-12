@@ -37,14 +37,6 @@
               "AllowedValues" : [ "t2.micro", "t2.small", "t2.medium", "t2.large", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "m3.medium", "m3.large", "m3.xlarge"]
           },
 
-          "OpenVPNASHostname" : {
-              "Description" : "Enter the DNS name of the OpenVPN AS appliance. Note that if you do not have DNS configured you will have to access by the Elastic IP address.",
-              "Type" : "String",
-              "Default" : "openvpn.yourdomain.com",
-              "AllowedPattern" : "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z]{2,63}$)",
-              "ConstraintDescription" : "Must be a valid DNS name without www. prefix."
-          },
-
           "OpenVPNASAdminUser" : {
               "Description" : "Choose a non-default admin name for your OpenVPN AS instance.",
               "Type" : "String",
@@ -146,7 +138,6 @@
                             "#!/bin/bash\n",
                             "apt-get update -y && apt-get upgrade -y\n",
                             "apt-get install python-pip -y && pip install awscli\n",
-                            "public_hostname=", { "Ref" : "OpenVPNASHostname" }, "\n",
                             "admin_user=", { "Ref" : "OpenVPNASAdminUser" }, "\n",
                             "admin_pw=", { "Ref" : "OpenVPNASAdminPW" }, "\n",
                             "reroute_gw=1\n",
