@@ -30,7 +30,13 @@ This CloudFormation template will create resources (i.e. S3, EIP, EC2) that will
 8. Create a **Stack Name** and then complete the Parameters. PLEASE, PLEASE, PLEASE change the password!!!
 9. At the **Options** screen click **Next** unless you know what you are doing.
 10. At the **Review** screen make sure to check the box next to **I acknowledge that this template might cause AWS CloudFormation to create IAM resources.** at the bottom and then click on the **Create** button.
-11. The outputs section of the completed template will display the public IP (Elastic IP) and S3 bucket. Use the public IP to connect to the instance (https://<EIP>) using the custom admin name and password combination that you set. The S3 bucket will contain the .ovpn file for user `router` that you can use to configure your router's OpenVPN client. Note that this user only requires certificate authenticaion and not password + certificate authentication.
+11. The outputs section of the completed template will display the public IP (Elastic IP) and S3 bucket. Use the public IP to connect to the instance using the custom admin name and password combination that you set. (i.e. https://elasticip/admin) The S3 bucket will contain the .ovpn file for user `router` that you can use to configure your router's OpenVPN client. Note that this user only requires certificate authenticaion and not password + certificate authentication.
+
+## Deletion Steps
+
+1. Delete the .ovpn file from the S3 bucket that was generated.
+2. In CloudFormation click the checkbox next to the **Stack Name**.
+3. From the **Actions** dropdown select **Delete Stack**.
 
 ## Notes About the Parameters
 
@@ -52,6 +58,8 @@ This CloudFormation template will create resources (i.e. S3, EIP, EC2) that will
 - This is a work in progress and there are many opportunities for further customization.
 
 - An Elastic IP (EIP) will be generated and assigned to the OpenVPN AS instance. If you shutdown or terminate the instance you will be charged for the unused EIP.
+ 
+- Delete the .ovpn file before deleting the stack otherwise stack deletion will fail since the bucket is not empty.
 
 - Make sure to delete the stack to delete all resources created instead of individually removing resources to avoid unexpected AWS charges.
 
