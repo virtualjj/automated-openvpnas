@@ -21,7 +21,7 @@ This CloudFormation template will create resources (i.e. S3, EIP, EC2) that will
 ## Deployment Steps
 
 1. Review and download this template.
-2. Login to your AWS console.
+2. Login to your AWS console and go to the region that you want to deploy OpenVPN AS.
 3. (Optional) Create your own S3 bucket and upload the template there. Remember that bucket names have to be unique to AWS S3.
 4. Open the CloudFormation service in the region you would like to deploy OpenVPN AS.
 5. Press the blue **Create New Stack** button.
