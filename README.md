@@ -70,7 +70,10 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 [![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png
 )](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml)
 
-4. 
+4. You will now see the **Create Stack** section of CloudFormation.
+	a. Make sure you are in the desired region.
+	b. Make sure the radio button for **Specify an Amazon S3 template URL** is selected with a populated URL.
+	c. Click **Next**.
 
 
 

@@ -618,7 +618,7 @@ Resources:
         Ref: OpenVPNInstanceProfile
       KeyName:
         Ref: KeyName
-      PrivateIpAddress: !Join [ "", [Ref: VPCCIDR, "1", ".5"]]
+      PrivateIpAddress: !Join [ "", [Ref: VPCCIDR, "0", ".5"]]
       SourceDestCheck: false
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", BYOLAMI ]
       SecurityGroupIds:
