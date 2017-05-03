@@ -71,12 +71,18 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 )](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml)
 
 4. You will now see the **Create Stack** section of CloudFormation.
-	a. Make sure you are in the desired region.
-	b. Make sure the radio button for **Specify an Amazon S3 template URL** is selected with a populated URL.
-	c. Click **Next**.
+	* Make sure you are in the desired region.
+	* Make sure the radio button for **Specify an Amazon S3 template URL** is selected with a populated URL.
+	* Click **Next**.
 
+![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-create-stack.jpg "Create Stack in CloudFormation")
 
+5. At the next menu you will need to specify some parameters to customize your OpenVPN AS deployment.
+	* (Optional) Change the CloudFormation stack name.
+	* (Optional) Enter the first two octets of a custom CIDR or use the default of 10.10.
+	* (Optional) Enter a custom tag for the resources that will be created. 
+	* (Optional) Select a different instance size. The default is t2.micro and is [AWS Free Tier](
 
-
+![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-specify-details-pt1.jpg "Specify Details Part 1")
 
 
