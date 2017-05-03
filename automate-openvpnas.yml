@@ -804,6 +804,5 @@ Resources:
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html
 Outputs:
   1aOpenVPNEIPName:
-    Description: 1a Public IP of OpenVPN Instance
-    Value:
-      Ref: EIP
+    Description: Admin Management URL
+    Value: !Join [ "", [ "https://", Ref: EIP, "/admin" ] ]
