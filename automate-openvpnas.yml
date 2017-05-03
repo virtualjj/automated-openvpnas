@@ -35,27 +35,28 @@ Metadata:
       - VPCFlowLogRetention
     ParameterLabels:
       VPCCIDR:
-        default: Enter the first two octets of this VPC's CIDR block.
+        default: Custom VPC CIDR
       TagPrefixer:
-        default: Add a Resource Tag
+        default: Custom Resource Tag
       InstanceSize:
-        default: Choose an appropriate instance size for your intended use.
+        default: Instance Size
       KeyName:
-        default: Select a key pair for this instance.
+        default: EC2 Key Pair
       OpenUse:
-        default: Will you connect using mobile or other DHCP assigned addresses? 'YES' will create a security group for VPN access to 0.0.0.0/0.
+        default: Open Access?
       OpenVPNASAccessIP:
-        default: OpenVPN AS Instance Management IP
+        default: OpenVPN AS Management IP
       OpenVPNASAdminUser:
-        default: Change the default openvpnas username to something else.
+        default: OpenVPN AS Admin Username
       OpenVPNASAdminPW:
-        default: OpenVPN AS Admin User Password
+        default: OpenVPN AS Admin Password
       VPCFlowLogRetention:
-        default: Choose the number of days to retain VPC Flow Log records.
+        default: VPC Flow Log Retention.
 # Help for CloudFormation Parameters
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
 Parameters:
   VPCCIDR:
+    Description: Enter a custom CIDR for your OpenVPN AS VPC using the first two octets.
     Type: String
     Default: 10.10.
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\."
@@ -68,7 +69,7 @@ Parameters:
     # [\.\-_/#A-Za-z0-9]+ Required for AWS::Logs::LogGroup
     AllowedPattern: "[\\w\\-\\/\\.]*"
   InstanceSize:
-    Description: Choose an instance size. Deafult is t2.micro AWS Free Tier Eligible.
+    Description: Choose an instance size. Deafult is AWS Free Tier Eligible t2.micro.
     Type: String
     Default: t2.micro
     AllowedValues:
@@ -127,10 +128,11 @@ Parameters:
     - i3.4xlarge
     - i3.8xlarge
   KeyName:
-    Description: REQUIRED name of an EXISTING EC2 key pair.
+    Description: REQUIRED - Select an EXISTING EC2 key pair to launch this OpenVPN AS instance.
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: 'You must choose the name of an existing EC2 KeyPair'
   OpenUse:
+    Description: If you have endpoints that receive public IPs via DHCP or are mobile devices choose YES for this.
     Default: 'NO'
     Type: String
     AllowedValues:
@@ -154,7 +156,7 @@ Parameters:
     AllowedPattern: "([A-Za-z0-9-]*)"
     ConstraintDescription: Name must only contain alphanumeric characters between 4 and 20 characters.
   OpenVPNASAdminPW:
-    Description: Between 10 and 50 alphanumeric characters. You can use special symbols @ * \#
+    Description: "Between 10 and 50 alphanumeric characters. You can use special symbols @ * #"
     NoEcho: true
     Type: String
     # No documentation on password complexity here: https://docs.openvpn.net/docs/access-server/openvpn-access-server-command-line-tools.html
@@ -164,7 +166,7 @@ Parameters:
     ConstraintDescription: Password must be between 10 and 50 characters. You can use all alphanumeric characters and the special symbols @ * #
   VPCFlowLogRetention:
     # Information source: Ref: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/flow-logs.html#flow-log-records
-    Description: Days to keep VPC Flow Log records. Note that it can take up to 15 mins for logs to appear.
+    Description: Select the number of days to retain VPC Flow Logs.
     Type: Number
     Default: '14'
     AllowedValues:
