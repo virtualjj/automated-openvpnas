@@ -3,9 +3,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Description: |
   Automate deployment of OpenVPN Access Server with the following features:
-  * Custom VPC
+  * Custom VPC CIDR
   * Security Group(s)
   * NACL
+  * VPC Flow Logs
+  * EC2 Systems Manager Ready
 
 # Help for CloudFormation Metadata
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
@@ -501,6 +503,19 @@ Resources:
       Protocol: 6
       RuleAction : allow
       RuleNumber : 100
+  InboundPublicHTTPNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties: 
+      CidrBlock: 0.0.0.0/0
+      Egress: False
+      NetworkAclId:
+        Ref: PublicNetworkAcl
+      PortRange:
+        From: '80'
+        To: '80'
+      Protocol: 6
+      RuleAction : allow
+      RuleNumber : 110
   InboundPublicHTTPSNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -513,7 +528,7 @@ Resources:
         To: '443'
       Protocol: 6
       RuleAction : allow
-      RuleNumber : 110
+      RuleNumber : 120
   InboundPublicOpenVPNNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -526,7 +541,7 @@ Resources:
         To: '1194'
       Protocol: 17
       RuleAction : allow
-      RuleNumber : 120
+      RuleNumber : 130
   InboundPublicRepliesNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -541,7 +556,7 @@ Resources:
         To: '65535'
       Protocol: 6
       RuleAction : allow
-      RuleNumber : 130
+      RuleNumber : 140
   OutboundPublicSSHNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -555,6 +570,19 @@ Resources:
       Protocol: 6
       RuleAction : allow
       RuleNumber : 100
+  OutboundPublicHTTPNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties: 
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId:
+        Ref: PublicNetworkAcl
+      PortRange:
+        From: '80'
+        To: '80'
+      Protocol: 6
+      RuleAction : allow
+      RuleNumber : 110
   OutboundPublicHTTPSNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -567,7 +595,7 @@ Resources:
         To: '443'
       Protocol: 6
       RuleAction : allow
-      RuleNumber : 110
+      RuleNumber : 120
   OutboundPublicOpenVPNNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -580,7 +608,7 @@ Resources:
         To: '1194'
       Protocol: 17
       RuleAction : allow
-      RuleNumber : 120
+      RuleNumber : 130
   PublicSSMOutboundRepliesNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -595,7 +623,7 @@ Resources:
         To: '65535'
       Protocol: 6
       RuleAction : allow
-      RuleNumber : 130
+      RuleNumber : 140
   PublicNetworkAclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
     Properties:
@@ -636,9 +664,12 @@ Resources:
             - OPENVPN-AS-INSTANCE
       UserData:
         Fn::Base64: !Sub |     # No more Fn::Join needed
-          #!/bin/bash
-          apt-get update -y && apt-get upgrade -y
-          apt-get install python-pip -y && pip install awscli
+          #!/bin/bash -xe
+          cd /tmp
+          wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
+          dpkg -i amazon-ssm-agent.deb
+          systemctl enable amazon-ssm-agent
+          rm amazon-ssm-agent.deb
           admin_user=${OpenVPNASAdminUser}
           admin_pw=${OpenVPNASAdminPW}
           reroute_gw=1
@@ -646,7 +677,9 @@ Resources:
           /usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min --value 1.2 ConfigPut
           /usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min_strict --value true ConfigPut
           /usr/local/openvpn_as/scripts/sacli --key vpn.server.tls_version_min --value 1.2 ConfigPut
-          /usr/local/openvpn_as/scripts/sacli start  
+          /usr/local/openvpn_as/scripts/sacli --key vpn.server.google_auth.enable --value true ConfigPut
+          /usr/local/openvpn_as/scripts/sacli start
+          apt-get update -y && apt-get upgrade -y
   OpenVPNInstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -804,5 +837,5 @@ Resources:
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html
 Outputs:
   1aOpenVPNEIPName:
-    Description: Admin Management URL
+    Description: Admin Login URL
     Value: !Join [ "", [ "https://", Ref: EIP, "/admin" ] ]
