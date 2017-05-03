@@ -1,69 +1,57 @@
-# Automated OpenVPN Access Server on AWS
+# What is the purpose of this project?
 
-This AWS CloudFormation template attempts to automate the steps outlined at the [OpenVPN EC2 AMI Quick Start Guide.] (https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/)
+This project currently has two main purposes:
 
-In addition, a generic user of `router` and associated .ovpn file will be generated to an S3 bucket for quicker configuration on a router like DD-WRT.
+1. Reduce the number of manual steps to deploy a secure&mdash;more secure than the defaults anyway&mdash;OpenVPN Access Server.
+2. Utilize and explain in detail often glossed over features of AWS that can protect AWS newbies from themselves. 
 
-Currently the supported regions are:
+# Why would I want to use this AWS CloudFormation template?
 
-1. us-east-1 (N. Virginia)
-2. us-west-1 (N. California)
-3. us-west-2 (Oregon)
-4. eu-west-1 (Ireland)
-5. eu-central-1 (Frankfurt)
-6. ap-northeast-1 (Tokyo)
-7. ap-southeast-2 (Sydney)
+This YAML AWS CloudFormation template will help you deploy a more secure OpenVPN Access Server (Community Edition) instance using AWS CloudFormation automation.
 
-## Disclaimer
+Although the fine folks at OpenVPN maintain a somewhat updated [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) there are some "gotchas" for folks that are new to AWS and/or OpenVPN AS.
 
-This CloudFormation template will create resources (i.e. S3, EIP, EC2) that will possibly incur charges on your AWS bill. Make sure to understand the template before deploying.
+This AWS CloudFormation template will help you quickly deploy a reasonably secure OpenVPN AS instance and possibly teach you some features of AWS that you don't know are available or useful.
 
-## Deployment Steps
+# Which AWS regions does this template support?
 
-1. Review and download this template.
-2. Login to your AWS console and go to the region that you want to deploy OpenVPN AS.
-3. (Optional) Create your own S3 bucket and upload the template there. Remember that bucket names have to be unique to AWS S3.
-4. Open the CloudFormation service in the region you would like to deploy OpenVPN AS.
-5. Press the blue **Create New Stack** button.
-6. (Optional) If you created your own S3 bucket select the **Specify an Amazon S3 template URL** and enter the URL of the template. Click **Next** to continue.
-7. Choose the **Upload a template to Amazon S3** radio button and upload this template then click **Next**
-8. Create a **Stack Name** and then complete the Parameters. PLEASE, PLEASE, PLEASE change the password!!!
-9. At the **Options** screen click **Next** unless you know what you are doing.
-10. At the **Review** screen make sure to check the box next to **I acknowledge that this template might cause AWS CloudFormation to create IAM resources.** at the bottom and then click on the **Create** button.
-11. The outputs section of the completed template will display the public IP (Elastic IP) and S3 bucket. Use the public IP to connect to the instance using the custom admin name and password combination that you set. (i.e. https://elasticip/admin) The S3 bucket will contain the .ovpn file for user `router` that you can use to configure your router's OpenVPN client. Note that this user only requires certificate authenticaion and not password + certificate authentication.
+The [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) has a list of AMIs to use but not all regions are listed since the document appears to only be updated when there is a new release for OpenVPN AS Community Edition.
 
-## Deletion Steps
+---
 
-1. Delete the .ovpn file from the S3 bucket that was generated.
-2. In CloudFormation click the checkbox next to the **Stack Name**.
-3. From the **Actions** dropdown select **Delete Stack**.
+#### QUICK TIP
+If you have AWS CLI installed and access keys configured you can query all regions for the correct AMI. Here is a long but one-liner example of how to query from the OS X terminal:
 
-## Notes About the Parameters
+```bash
+for REGION in `aws ec2 describe-regions --output text | cut -f3`; do echo "Listing instances in region: $REGION..." && aws ec2 describe-images --owners aws-marketplace --filters "Name=product-code,Values=f2ew2wrz425a1jagnifd02u5t" --query 'Images[?CreationDate>=`2016-10`].{ID:ImageId,DATE:CreationDate}' --region $REGION --output text; done
+```
+The `--filter` for `Values=f2ew2wrz425a1jagnifd02u5t` was taken from an image that was launched using one of the OpenVPN recommended AMI IDs. It appears that using AMIs with this value baked into the image will let you deploy instances without having to *manually* subscribe to the OpenVPN AS product in the AWS Marketplace.
 
-`KeyPairName` A Key pair is always required to start an AWS instance. If you don't have a keypair the template will fail.
+The `--query` for `` ?CreationDate>=`2016-10` `` simply uses the year and month listed in the above mentioned quick start guide.
 
-`MobileUse` If you plan on using the OpenVPN mobile app (Yes there is one for iOS and Android) you will need to open up a security group to 0.0.0.0/0. When you select **Yes** for this parameter another security group will be created and applied to the OpenVPN AS instance.
+* Instructions on how to install the AWS CLI [here](http://docs.aws.amazon.com/cli/latest/userguide/installing.html).
+* Online reference for AWS CLI `aws ec2` commands [here](http://docs.aws.amazon.com/cli/latest/reference/ec2/index.html#cli-aws-ec2).
 
-`OpenVPNASAccessIP` Chances are you will want to use the OpenVPN AS with your home router especially if you are running DD-WRT or Tomato firmware. To prevent opening your OpenVPN AS to the world use your public IP address here.
+---
 
-`OpenVPNASInstanceType` If you plan on taking advantage of the AWS Free Tier make sure keep the default of **t2.micro**. If you manually try to setup an OpenVPN AS instance you cannot select t2.nano however, you can change the instance size after it has been created. Note that t2.nano does NOT quality for AWS's free tier.
+Below are the AMIs that were generated with the AWS CLI query outlined above and used in this project's CloudFormation template:
 
-`OpenVPNASAdminUser` Choose a unique admin username here.
-
-`OpenVPNASAdminPW` The template requires a password and is defaulted to Ck6#*3a9. Don't be an idiot and keep this password - set a strong password please. Note that I have opted to require only three special characters because some characters are not supported for passwords in OpenVPN AS for some reason.
-
-
-## Other Notes
-
-- This is a work in progress and there are many opportunities for further customization.
-
-- An Elastic IP (EIP) will be generated and assigned to the OpenVPN AS instance. If you shutdown or terminate the instance you will be charged for the unused EIP.
- 
-- Delete the .ovpn file before deleting the stack otherwise stack deletion will fail since the bucket is not empty.
-
-- Make sure to delete the stack to delete all resources created instead of individually removing resources to avoid unexpected AWS charges.
-
-- This template sets the minimum OpenVPN client version to TLS 1.2
-
-- `userdata` script parameters were taken from `/usr/local/openvpn_as/scripts/README.txt` on the OpenVPN AS appliance.
+| Friendly Region Name | Region ID | Image ID  |
+| --- |---| ---|
+| Asia Pacific (Mumbai) | ap-south-1 |ami-066f1b69 |
+| EU (London) | eu-west-2 |ami-86c3c9e2 |
+| EU (Ireland) | eu-west-1 | ami-07783674 |
+| Asia Pacific (Seoul) | ap-northeast-2 | ami-b6e733d8 |
+| Asia Pacific (Tokyo) | ap-northeast-1 | ami-2f66c04e |
+| South America (São Paulo) | sa-east-1 | ami-283fa244 |
+| Canada (Central) | ca-central-1 | ami-24ad1f40 |
+| Asia Pacific (Singapore) | ap-southeast-1 | ami-d72a8cb4 |
+| Asia Pacific (Sydney) | ap-southeast-2 | ami-5e3b063d |
+| EU (Frankfurt) | eu-central-1 | ami-3f788150 |
+| US East (N. Virginia) | us-east-1 | ami-44aaf953 |
+| US East (Ohio) | us-east-2 | ami-ae3e64cb |
+| US West (N. California) | us-west-1 | ami-fa105b9a |
+| US West (Oregon) | us-west-2 | ami-e8d67288 |
+| China Beijing | cn-north-1 | ami-XXXXXXXX |
+| AWS GovCloud | us-gov-west-1 | ami-XXXXXXXX |
 
