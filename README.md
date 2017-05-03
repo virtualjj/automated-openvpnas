@@ -85,4 +85,11 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-specify-details-pt1.jpg "Specify Details Part 1")
 
+6. Continuing down the screen, complete the remaining parameters.
+	* (Required) Select your key pair.
+	* (Optional) Select YES or NO for enabling 0.0.0.0/0 for VPN access for mobile or DHCP type endpoints.
+	* (Required) Enter a unique username.
+	* (Required) Enter a strong password.
+	* (Optional) Select desired desired VPC Flow Log record retention.
 
+![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-specify-details-pt2.jpg "Specify Details Part 2")
