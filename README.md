@@ -36,7 +36,7 @@ The `--query` for `` ?CreationDate>=`2016-10` `` simply uses the year and month 
 
 Below are the AMIs that were generated with the AWS CLI query outlined above and used in this project's CloudFormation template:
 
-![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-cli-query.jpgg "Example aws ec2 describe-instances AWS CLI command")
+![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-cli-query.jpg "Example aws ec2 describe-instances AWS CLI command")
 
 | Friendly Region Name | Region ID | Image ID  |
 | --- |---| ---|
