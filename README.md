@@ -63,10 +63,12 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-login-oregon.jpg "Example logging into AWS console and selecting a region.")
 
-2. Click the image below to go to the CloudFormation service in the selected region of your AWS account.
+2. Click the **Launch Stack** button below to go directly to the CloudFormation service in the selected region of your AWS account.
 
 [![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png
-)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml)
+)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml){:target="_blank"}
+
+3. 
 
 
 
