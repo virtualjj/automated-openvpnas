@@ -63,7 +63,7 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-login-oregon.jpg "Example logging into AWS console and selecting a region.")
 
-2. Make sure that you have an EC2 Key Pair configured. A key pair must be configured and selected before launching the CloudFormation template otherwise the launch will fail. You can find detailed instructions on the different ways to create key pairs from AWS [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If you want to spice up your security a bit more generate your own key pairs and password protect them. Then store the private key separately from the password. However, this template uses AWS EC2 Systems Manager so you can potentially eliminate having to login with SSH at all and run commands using AWS Run Command instead.
+2. Make sure that you have an EC2 Key Pair configured. A key pair must be configured and selected before launching the CloudFormation template otherwise the launch will fail. You can find detailed instructions on the different ways to create key pairs from AWS [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If you want to spice up your security a bit more generate your own key pairs and password protect them. Then store the private key separately from the password.
 
 3. Click the **Launch Stack** button below to go directly to the CloudFormation service in the selected region of your AWS account.
 
@@ -71,8 +71,8 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 )](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml)
 
 4. You will now see the **Create Stack** section of CloudFormation.
-	* Make sure you are in the desired region.
-	* Make sure the radio button for **Specify an Amazon S3 template URL** is selected with a populated URL.
-	* Click **Next**.
+	1. Make sure you are in the desired region.
+	2. Make sure the radio button for **Specify an Amazon S3 template URL** is selected with a populated URL.
+	3. Click **Next**.
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-create-stack.jpg "Create Stack in CloudFormation")
