@@ -11,7 +11,7 @@ This YAML AWS CloudFormation template will help you deploy a more secure OpenVPN
 
 Although the fine folks at OpenVPN maintain a somewhat updated [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) there are some "gotchas" for folks that are new to AWS and/or OpenVPN AS.
 
-This AWS CloudFormation template will help you quickly deploy a reasonably secure OpenVPN AS instance and possibly teach you some features of AWS that you don't know are available or useful.
+This AWS CloudFormation template will help you quickly deploy a reasonably secure OpenVPN AS instance and possibly teach you some features of AWS that you don't know are available such as AWS EC2 Systems Manager.
 
 # Which AWS regions does this template support?
 
@@ -20,7 +20,7 @@ The [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs
 ---
 
 #### QUICK TIP
-If you have AWS CLI installed and access keys configured you can query all regions for the correct AMI. Here is a long but one-liner example of how to query from the OS X terminal:
+If you have AWS CLI installed and access keys configured you can query all regions for the correct AMI. Here is a long but one line example of how to query from the OS X terminal assuming you have an IAM user and access keys configured:
 
 ```bash
 for REGION in `aws ec2 describe-regions --output text | cut -f3`; do echo "Listing instances in region: $REGION..." && aws ec2 describe-images --owners aws-marketplace --filters "Name=product-code,Values=f2ew2wrz425a1jagnifd02u5t" --query 'Images[?CreationDate>=`2016-10`].{ID:ImageId,DATE:CreationDate}' --region $REGION --output text; done
@@ -63,7 +63,7 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-login-oregon.jpg "Example logging into AWS console and selecting a region.")
 
-2. Make sure that you have an EC2 Key Pair configured. A key pair must be configured and selected before launching the CloudFormation template otherwise the launch will fail. You can find detailed instructions on the different ways to create key pairs from AWS [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
+2. Make sure that you have an EC2 Key Pair configured. A key pair must be configured and selected before launching the CloudFormation template otherwise the launch will fail. You can find detailed instructions on the different ways to create key pairs from AWS [here](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If you want to spice up your security a bit more generate your own key pairs and password protect them. Then store the private key separately from the password. However, this template uses AWS EC2 Systems Manager so you can potentially eliminate having to login with SSH at all and run commands using AWS Run Command instead.
 
 3. Click the **Launch Stack** button below to go directly to the CloudFormation service in the selected region of your AWS account.
 
@@ -76,20 +76,3 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 	* Click **Next**.
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-create-stack.jpg "Create Stack in CloudFormation")
-
-5. At the next menu you will need to specify some parameters to customize your OpenVPN AS deployment.
-	* (Optional) Change the CloudFormation stack name.
-	* (Optional) Enter the first two octets of a custom CIDR or use the default of 10.10.
-	* (Optional) Enter a custom tag for the resources that will be created. 
-	* (Optional) Select a different instance size. The default is t2.micro and is [AWS Free Tier](
-
-![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-specify-details-pt1.jpg "Specify Details Part 1")
-
-6. Continuing down the screen, complete the remaining parameters.
-	* (Required) Select your key pair.
-	* (Optional) Select YES or NO for enabling 0.0.0.0/0 for VPN access for mobile or DHCP type endpoints.
-	* (Required) Enter a unique username.
-	* (Required) Enter a strong password.
-	* (Optional) Select desired desired VPC Flow Log record retention.
-
-![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-specify-details-pt2.jpg "Specify Details Part 2")

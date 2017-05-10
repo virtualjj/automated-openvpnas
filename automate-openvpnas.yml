@@ -4,10 +4,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: |
   Automate deployment of OpenVPN Access Server with the following features:
   * Custom VPC CIDR
-  * Security Group(s)
-  * NACL
+  * Security Groups
+  * Use of NACLs
   * VPC Flow Logs
-  * EC2 Systems Manager Ready
+  * EC2 Systems Manager (SSM) Ready
 
 # Help for CloudFormation Metadata
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/metadata-section-structure.html
@@ -25,6 +25,7 @@ Metadata:
     - Label:
         default: OpenVPN AS INSTANCE
       Parameters:
+      - OpenVPNASDNSName
       - InstanceSize
       - KeyName
       - OpenUse
@@ -33,7 +34,7 @@ Metadata:
       Parameters:
       - OpenVPNASAccessIP
       - OpenVPNASAdminUser
-      - OpenVPNASAdminPW
+      - SSMSecretString
       - VPCFlowLogRetention
     ParameterLabels:
       VPCCIDR:
@@ -45,33 +46,43 @@ Metadata:
       KeyName:
         default: EC2 Key Pair
       OpenUse:
-        default: Open Access?
+        default: Open VPN Access
+      OpenVPNASDNSName:
+        default: Public FQDN
       OpenVPNASAccessIP:
         default: OpenVPN AS Management IP
       OpenVPNASAdminUser:
         default: OpenVPN AS Admin Username
-      OpenVPNASAdminPW:
-        default: OpenVPN AS Admin Password
+      SSMSecretString:
+        default: AWS Parameter Store Name (OpenVPN AS Admin Password)
       VPCFlowLogRetention:
         default: VPC Flow Log Retention.
 # Help for CloudFormation Parameters
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
 Parameters:
   VPCCIDR:
-    Description: Enter a custom CIDR for your OpenVPN AS VPC using the first two octets.
+    Description: Enter a custom CIDR for your OpenVPN AS VPC using the first two octets. (eg. 10.10.)
     Type: String
     Default: 10.10.
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\."
     ConstraintDescription: 'Choose the first two octets of a CIDR. i.e. 10.10.'
   TagPrefixer:
-    Description: Enter your own tag prefix to help identify resources created by this stack. eg. OPENVPNAS-
+    Description: Enter your own tag prefix to help identify resources created by this stack. (eg. TEST-)
     Type: String
-    Default: OPENVPNAS-
+    Default: TEST-
     # Generally allowed characters for AWS TAGs are: letters, spaces, and numbers representable in UTF-8, plus the following special characters: + - = . _ : / @. (Ref: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html)
     # [\.\-_/#A-Za-z0-9]+ Required for AWS::Logs::LogGroup
     AllowedPattern: "[\\w\\-\\/\\.]*"
+  OpenVPNASDNSName:
+    Description: OPTIONAL - Enter the public DNS name for this instance if you plan registering the public IP with DNS. (eg. example.com or mgmt.example.com) Otherwise, the hostname will be the internal IP address of the instance.
+    Type: String
+    Default: mgmt.example.com
+    # Jesus REGEX can be a pain in the rear. http://rubular.com/ is a good resource if you get stuck. 
+    # Helpful but usually not reference for REGEX in CloudFormation templates: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-regexes.html
+    AllowedPattern: "^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$"
+    ConstraintDescription: Must be a valid RFC-952 or RFC-1123 DNS hostname.
   InstanceSize:
-    Description: Choose an instance size. Deafult is AWS Free Tier Eligible t2.micro.
+    Description: Choose an instance size. Deafult is the AWS Free Tier eligible t2.micro.
     Type: String
     Default: t2.micro
     AllowedValues:
@@ -132,9 +143,9 @@ Parameters:
   KeyName:
     Description: REQUIRED - Select an EXISTING EC2 key pair to launch this OpenVPN AS instance.
     Type: AWS::EC2::KeyPair::KeyName
-    ConstraintDescription: 'You must choose the name of an existing EC2 KeyPair'
+    ConstraintDescription: You must choose the name of an existing EC2 KeyPair
   OpenUse:
-    Description: If you have endpoints that receive public IPs via DHCP or are mobile devices choose YES for this.
+    Description: If you have endpoints that receive public IPs via DHCP or are mobile devices choose 'YES' for this. Note that this is for VPN access (i.e. UDP 1194) only, not the web admin portal.
     Default: 'NO'
     Type: String
     AllowedValues:
@@ -142,7 +153,7 @@ Parameters:
     - 'NO'
     ConstraintDescription: You must specify YES or NO. 
   OpenVPNASAccessIP:
-    Description: Enter the IP address that will be used to manage this instance. Use 0.0.0.0/0 at your own peril.
+    Description: Enter the source IP address that will be used to access administrator web console. Use http://ipchicken.com to confirm. CAUTION - use 0.0.0.0/0 at your own peril.
     Type: String
     MinLength: 9
     MaxLength: 18
@@ -150,27 +161,21 @@ Parameters:
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})(/32|/0)"
     ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x
   OpenVPNASAdminUser:
-    Description: Avoid using the default 'openvpnas' username.
+    Description: Minimum of 4 characters. Avoid using the default 'openvpnas' username.
     Type: String
     MinLength: 4
-    MaxLength: 20
+    MaxLength: 50
     Default: ChangeMeBoneHead
     AllowedPattern: "([A-Za-z0-9-]*)"
-    ConstraintDescription: Name must only contain alphanumeric characters between 4 and 20 characters.
-  OpenVPNASAdminPW:
-    Description: "Between 10 and 50 alphanumeric characters. You can use special symbols @ * #"
-    NoEcho: true
+    ConstraintDescription: Name must only contain alphanumeric characters between 4 and 50 characters.
+  SSMSecretString:
+    Description: OPTIONAL - Enter the name of your AWS Parameter Store secret string for the web admin password. Otherwise the default login will be 'ChangeMePlease' so make sure to change the password after logging into the Web Admin console.
     Type: String
-    # No documentation on password complexity here: https://docs.openvpn.net/docs/access-server/openvpn-access-server-command-line-tools.html
-    MinLength: 10
-    MaxLength: 50
-    AllowedPattern: "([a-zA-Z0-9@*#]*)"
-    ConstraintDescription: Password must be between 10 and 50 characters. You can use all alphanumeric characters and the special symbols @ * #
   VPCFlowLogRetention:
     # Information source: Ref: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/flow-logs.html#flow-log-records
     Description: Select the number of days to retain VPC Flow Logs.
     Type: Number
-    Default: '14'
+    Default: '7'
     AllowedValues:
     - '7'
     - '14'
@@ -261,7 +266,6 @@ Resources:
           - ''
           - - Ref: TagPrefixer
             - VPC
-#### Section 105
   # S3 VPC Endpoints to get Ubuntu updates via AWS Internal network and save $$$ on network bandwidth.
   S3Endpoint:
     DependsOn:
@@ -336,7 +340,6 @@ Resources:
         Ref: 1aVPCPrivateSubnet
       RouteTableId:
         Ref: 1aPrivateRouteTable
-#### Section 300:          
   1aVPCPrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -385,7 +388,6 @@ Resources:
         Ref: 1aPrivateRouteTable
       InstanceId:
         Ref: OpenVPNASInstance          
-#### Section 400
   # Help for CloudFormation NAT Gateway
   # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-natgateway.html
   EIP:
@@ -419,8 +421,7 @@ Resources:
         Ref: VPCInternetGateway
       VpcId:
         Ref: VPC
-#### Section 500
-  #Create a SG that doesn't have Ingress rules and only allows Egress 80 and 443.
+  # Keep Web Admin Console locked down to 443 only.
   OpenVPNASAdminConsoleSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -440,6 +441,7 @@ Resources:
             - OPENVPN-AS-ADMIN-CONSOLE
       VpcId:
         Ref: VPC
+  # SSH should never be open to 0.0.0.0/0!!!
   SSHOpenVPNASSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -459,6 +461,7 @@ Resources:
             - OPENVPN-AS-SSH-ACCESS
       VpcId:
         Ref: VPC
+  # Ideally this would be locked down by source IP but if on mobile or public IP served via DHCP, no choice.
   OpenVPNVPNASSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -477,7 +480,6 @@ Resources:
             - OPENVPN-VPN-ACCESS
       VpcId:
         Ref: VPC       
-#### Section 600  
   PublicNetworkAcl:
     Type: AWS::EC2::NetworkAcl
     Properties:
@@ -549,7 +551,8 @@ Resources:
       Egress: false
       NetworkAclId:
         Ref: PublicNetworkAcl
-      # Help for Ephemeral ports and how to use
+      # Many type of clients will have replies so use this range.
+      # Help for Ephemeral ports and how to use:
       # http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_ACLs.html#VPC_ACLs_Ephemeral_Ports
       PortRange:
         From: '1024'
@@ -617,10 +620,9 @@ Resources:
       NetworkAclId:
         Ref: PublicNetworkAcl
       PortRange:
-        # Be careful here. NAT Gateway requires 1024 ~ 65535. Ref: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_ACLs.html#VPC_ACLs_Ephemeral_Ports
-        # AWS example shows 49152 ~ 65535.
-        From: '1024'
-        To: '65535'
+        # OpenVPN AS is Linux based so use this range. Ref. http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_ACLs.html#VPC_ACLs_Ephemeral_Ports
+        From: '32768'
+        To: '61000'
       Protocol: 6
       RuleAction : allow
       RuleNumber : 140
@@ -631,7 +633,6 @@ Resources:
         Ref: 1aVPCPublicSubnet
       NetworkAclId:
         Ref: PublicNetworkAcl
-#### Section 700
   # Help for CloudFormation EC2 Instance
   # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
   OpenVPNASInstance:
@@ -639,6 +640,45 @@ Resources:
     - OpenVPNInstanceRole
     - S3Endpoint
     Type: AWS::EC2::Instance
+    Metadata: 
+      AWS::CloudFormation::Init: 
+        config: 
+          commands: 
+            # Annoying that there is no amazon-ssm-agent package for Ubuntu so have to install like this.
+            a:
+              command: "wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb"
+              cwd: "/tmp"
+            b:
+              command: "dpkg -i amazon-ssm-agent.deb"
+              cwd: "/tmp"
+            c:
+              command: "systemctl enable amazon-ssm-agent"
+            d:
+              command: "rm amazon-ssm-agent.deb"
+              cwd: "/tmp"
+            # These are the OpenVPN AS command-line customizations. From within the instance or using the AWS Run Command you can see what is set by using the command: /usr/local/openvpn_as/scripts/sacli ConfigQuery
+            e:
+              command: "/usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min --value 1.2 ConfigPut"
+            f:
+              command: "/usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min_strict --value true ConfigPut"
+            g:
+              command: "/usr/local/openvpn_as/scripts/sacli --key vpn.server.tls_version_min --value 1.2 ConfigPut"
+            h:
+              command: "/usr/local/openvpn_as/scripts/sacli --key cs.tls_version_min --value 1.2 ConfigPut"
+            i:
+              command: "/usr/local/openvpn_as/scripts/sacli --key cs.tls_version_min_strict --value true ConfigPut"
+            # OpenVPN AS supported ciphers listed here: https://openvpn.net/index.php/access-server/docs/admin-guides/437-how-to-change-the-cipher-in-openvpn-access-server.html
+            j:
+              command: "/usr/local/openvpn_as/scripts/sacli --key vpn.client.config_text --value 'cipher AES-256-CBC' ConfigPut"
+            k:
+              command: "/usr/local/openvpn_as/scripts/sacli --key vpn.server.config_text --value 'cipher AES-256-CBC' ConfigPut"
+            # Changes require a restart.
+            l:
+              command: "/usr/local/openvpn_as/scripts/sacli start"      
+            # This is where the Parameter Store secure string is passed and changes the insecure 'ChangeMePlease' default password. However, if using a default SSM KMS key the instance role and IAM action get-parameters will allow decryption of the secure string so either remove SSH access and/or remove the IAM policy action.
+            m:
+              command: !Sub |
+                /usr/local/openvpn_as/scripts/ovpnpasswd -u ${OpenVPNASAdminUser} -p `aws ssm get-parameters --region ${AWS::Region} --names ${SSMSecretString} --with-decryption --output text | cut -f4`
     Properties:
       InstanceType:
         Ref: InstanceSize
@@ -646,6 +686,7 @@ Resources:
         Ref: OpenVPNInstanceProfile
       KeyName:
         Ref: KeyName
+      # Use the first available IP instead of a random, DHCP one.
       PrivateIpAddress: !Join [ "", [Ref: VPCCIDR, "0", ".5"]]
       SourceDestCheck: false
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", BYOLAMI ]
@@ -663,23 +704,18 @@ Resources:
           - - Ref: TagPrefixer
             - OPENVPN-AS-INSTANCE
       UserData:
-        Fn::Base64: !Sub |     # No more Fn::Join needed
-          #!/bin/bash -xe
-          cd /tmp
-          wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
-          dpkg -i amazon-ssm-agent.deb
-          systemctl enable amazon-ssm-agent
-          rm amazon-ssm-agent.deb
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update -y
+          apt-get -y install python-pip
+          pip install awscli
+          public_hostname=${OpenVPNASDNSName}
           admin_user=${OpenVPNASAdminUser}
-          admin_pw=${OpenVPNASAdminPW}
+          admin_pw=ChangeMePlease
           reroute_gw=1
           reroute_dns=1
-          /usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min --value 1.2 ConfigPut
-          /usr/local/openvpn_as/scripts/sacli --key vpn.client.tls_version_min_strict --value true ConfigPut
-          /usr/local/openvpn_as/scripts/sacli --key vpn.server.tls_version_min --value 1.2 ConfigPut
-          /usr/local/openvpn_as/scripts/sacli --key vpn.server.google_auth.enable --value true ConfigPut
-          /usr/local/openvpn_as/scripts/sacli start
-          apt-get update -y && apt-get upgrade -y
+          pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+          cfn-init -v --stack ${AWS::StackName} --resource OpenVPNASInstance --region ${AWS::Region}
   OpenVPNInstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -712,7 +748,6 @@ Resources:
       Path: "/"
       Roles:
       - Ref: OpenVPNInstanceRole                
-#### Section 800
   VPCFlowLogsRole:
     Type: AWS::IAM::Role
     Properties:
@@ -781,7 +816,6 @@ Resources:
         Ref: VPC
       ResourceType: VPC
       TrafficType: ALL
-#### Section 900
   CloudWatchMetricsPolicy:
     DependsOn:
       - OpenVPNInstanceRole
