@@ -106,7 +106,7 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-connection-not-private.jpg "Get Your Connection Is Not Private Example")
 
-13. Congratulations if you see the Admin Login page! Enter the username and either 'ChangeMePlease' or the secret string you configured if using SSM Parameter Store.
+13. Congratulations if you see the Admin Login page! Enter the username and either the default password of *ChangeMePlease* or the secret string you configured if using SSM Parameter Store.
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-admin-login.jpg "OpenVPN AS Admin Login")
 
@@ -114,7 +114,7 @@ Below are the AMIs that were generated with the AWS CLI query outlined above and
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-eula-agree.jpg "OpenVPN AS EULA")
 
-15. You know have a functioning OpenVPN AS server running on AWS to start playing around with!
+15. You now have a functioning OpenVPN AS server running on AWS to start playing around with!
 
 ![alt text](https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/automated-openvpnas-readme-login-success.jpg "OpenVPN AS Successful Login")
 
