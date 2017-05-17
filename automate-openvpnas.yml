@@ -79,7 +79,7 @@ Parameters:
     Default: mgmt.example.com
     # Jesus REGEX can be a pain in the rear. http://rubular.com/ is a good resource if you get stuck. 
     # Helpful but usually not reference for REGEX in CloudFormation templates: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-regexes.html
-    AllowedPattern: "^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$"
+    AllowedPattern: "^([a-z0-9]|[a-z0-9][a-z0-9\\-]{0,61}[a-z0-9])(\\.([a-z0-9]|[a-z0-9][a-z0-9\\-]{0,61}[a-z0-9]))*$"
     ConstraintDescription: Must be a valid RFC-952 or RFC-1123 DNS hostname.
   InstanceSize:
     Description: Choose an instance size. Deafult is the AWS Free Tier eligible t2.micro.
