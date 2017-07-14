@@ -28,7 +28,7 @@ All regions listed in the [Amazon Web Services EC2 Community Appliance Quick Sta
 3. Click the **Launch Stack** button below to go directly to the CloudFormation service in the selected region of your AWS account.
 
 [![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png
-)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automate-openvpnas.yml)
+)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=openvpnas&templateURL=https://s3-us-west-2.amazonaws.com/github.automated-openvpnas/automated-openvpnas.yml)
 
 4. You will now see the **Create Stack** section of CloudFormation. The most important thing to confirm on this screen is the region. Click **Next**.
 
