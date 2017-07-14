@@ -560,6 +560,19 @@ Resources:
       Protocol: 6
       RuleAction : allow
       RuleNumber : 140
+  InboundICMPPublicRepliesNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties: 
+      CidrBlock: 0.0.0.0/0
+      Egress: false
+      NetworkAclId:
+        Ref: PublicNetworkAcl
+      PortRange:
+        From: '8'
+        To: '0'
+      Protocol: -1
+      RuleAction : allow
+      RuleNumber : 150
   OutboundPublicSSHNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties: 
@@ -620,12 +633,26 @@ Resources:
       NetworkAclId:
         Ref: PublicNetworkAcl
       PortRange:
-        # OpenVPN AS is Linux based so use this range. Ref. http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_ACLs.html#VPC_ACLs_Ephemeral_Ports
         From: '32768'
-        To: '61000'
+        # 6100 will not work for this AMI.
+        To: '65535'
       Protocol: 6
       RuleAction : allow
       RuleNumber : 140
+  PublicICMPOutboundRepliesNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties: 
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId:
+        Ref: PublicNetworkAcl
+      PortRange:
+        # Reference: https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-codes-8
+        From: '8'
+        To: '0'
+      Protocol: -1
+      RuleAction : allow
+      RuleNumber : 150
   PublicNetworkAclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
     Properties:
