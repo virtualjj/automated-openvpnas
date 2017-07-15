@@ -37,7 +37,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-003-region-check-again.jpg" alt="Double-check in the intended AWS region." height="75%" width="75%">
 </p>
 
-4. You can stick with the defaults here but try and enter a hostname for the instance. If you plan on access the web console using a DNS name and/or using custom TLS certificates (eg. Let's Encrypt) you will need a proper hostname FQDN anyway so this will save you a step in the future.
+4. You can stick with the defaults here but try and enter a hostname for the instance. If you plan on accessing the web console using a DNS name and/or using custom TLS certificates (eg. Let's Encrypt) you will need a proper hostname FQDN anyway so this will save you a step in the future.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-004-enter-fqdn.jpg" alt="Double-check in the intended AWS region." height="75%" width="75%">
