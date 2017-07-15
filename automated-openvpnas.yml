@@ -48,7 +48,7 @@ Metadata:
       OpenUse:
         default: Open VPN Access
       OpenVPNASDNSName:
-        default: Public FQDN
+        default: Public FQDN (OPTIONAL)
       OpenVPNASAccessIP:
         default: OpenVPN AS Management IP
       OpenVPNASAdminUser:
@@ -74,9 +74,9 @@ Parameters:
     # [\.\-_/#A-Za-z0-9]+ Required for AWS::Logs::LogGroup
     AllowedPattern: "[\\w\\-\\/\\.]*"
   OpenVPNASDNSName:
-    Description: OPTIONAL - Enter the public DNS name for this instance if you plan registering the public IP with DNS. (eg. example.com or mgmt.example.com) Otherwise, the hostname will be the internal IP address of the instance.
+    Description: Enter the public DNS name for this instance if you plan registering the public IP with DNS and/or install TLS certificates. Otherwise, remove the default to make the hostname the INTERNAL IP address of the instance.
     Type: String
-    Default: mgmt.example.com
+    Default: vpn.example.com
     # Jesus REGEX can be a pain in the rear. http://rubular.com/ is a good resource if you get stuck. 
     # Helpful but usually not reference for REGEX in CloudFormation templates: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-regexes.html
     AllowedPattern: "^([a-z0-9]|[a-z0-9][a-z0-9\\-]{0,61}[a-z0-9])(\\.([a-z0-9]|[a-z0-9][a-z0-9\\-]{0,61}[a-z0-9]))*$"
@@ -153,13 +153,13 @@ Parameters:
     - 'NO'
     ConstraintDescription: You must specify YES or NO. 
   OpenVPNASAccessIP:
-    Description: Enter the source IP address that will be used to access administrator web console. Use http://ipchicken.com to confirm. CAUTION - use 0.0.0.0/0 at your own peril.
+    Description: Enter the source IP address that will be used to access administrator web console. Use http://ipchicken.com to confirm. 0.0.0.0/0 is not allowed.
     Type: String
     MinLength: 9
     MaxLength: 18
     Default : 0.0.0.0/0
-    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})(/32|/0)"
-    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})(/32"
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/32
   OpenVPNASAdminUser:
     Description: Minimum of 4 characters. Avoid using the default 'openvpnas' username.
     Type: String
