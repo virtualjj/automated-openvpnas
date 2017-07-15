@@ -1,4 +1,4 @@
-# Automated OpenVPN AS
+# Automated OpenVPN AS (Access Server)
 
 This project takes the basic steps maintained at [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) at bit further by automating the entire deployment with a few security tweaks using AWS CloudFormation. This stack also configures VPC Flow Logs and EC2 Systems Manager 
 
@@ -108,13 +108,13 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-014-working-openvpnas.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
+15. Not that it matters with a self-signed TLS certificate but notice that only TLS 1.2 is enabled.
+
+<p align="center"> 
+<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-015-only-tls-1.2-.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
+</p>
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-
-
-
-
-
-
