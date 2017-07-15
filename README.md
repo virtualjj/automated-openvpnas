@@ -78,13 +78,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 </p>
 
 
-10. Click on the **Overview** dropdown and select **Outputs**.
-
-<p align="center"> 
-<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-009-stack-outputs.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
-</p>
-
-10. Click on the hyperlink to have a new tab open that will take you to the OpenVPN AS web Admin Login page. Remember that at this point, even though you might have entered a custom hostname parameter you can only access the Admin Login page by IP address since DNS is not configured yet. 
+10. Click on the **Overview** dropdown and select **Outputs**. Click on the hyperlink to have a new tab open that will take you to the OpenVPN AS web Admin Login page. Remember that at this point, even though you might have entered a custom hostname parameter you can only access the Admin Login page by IP address since DNS is not configured yet.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-010-stack-outputs.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
