@@ -67,14 +67,14 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-008-stack-launch-success.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
-9. It will be tempting to try logging into the instance and start doing "stuff". Be patient and wait for the instance status checks to complete. Also, if you try logging into the instance to early you'll break the initial ***ovpn-init --ec2*** script which is responsible for unintended setup.
+9. It will be tempting to try logging into the instance and start doing "stuff". Be patient and wait for the instance status checks to complete. Also, if you try logging into the instance too early you'll break the initial ***ovpn-init --ec2*** script which is responsible for unintended setup.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-009-not-ready-status.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
 <p align="center"> 
-<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-009.5-deploystep-009.5-checks-passed.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
+<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-009.5-checks-passed.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
 
