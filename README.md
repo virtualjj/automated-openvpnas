@@ -20,10 +20,10 @@ Finally, if you are looking to use Let's Encrypt take a look at my other Github 
 
 You will need an EC2 Key Pair in order to successfully deploy this CloudFormation stack. Basic insructions on how to do this can be found [here.](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair) A more secure method would be to create your own, password protect the private key, store the keys separately from the password (eg. passphrase in [KeePass](http://keepass.info/), key pairs stored locally with backups), and upload the public key to AWS. Basic instructions to get you started with creating your own key pairs can be found [here.](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)
 
-This stack configures EC2 Systems Manager so you can use the Secret Strings feature of [AWS Parameter Store](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) to pass your OpenVPN AS administrator password relatively securely during deployment of the instance. You don't have to use Parameter Store but in case you didn't know, when you pass parameters in **Userdata** all commands are passed as plaintext. This is generally a concern since anyone that has access to the instance can see decrypted passwords by either issuing the `curl http://169.254.169.254/latest/user-data` command or looking in the logs. I recommend that you store your OpenVPN AS password in AWS Parameter Store at least for the initial deployment. 
+This stack configures EC2 Systems Manager so you can use the *Secure String* feature of [AWS Parameter Store](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) to pass your OpenVPN AS administrator password relatively securely during deployment of the instance. You don't have to use Parameter Store but in case you didn't know, when you pass parameters in **Userdata** all commands are passed as plaintext. This is generally a concern since anyone that has access to the instance can see decrypted passwords by either issuing the `curl http://169.254.169.254/latest/user-data` command or looking in the logs. I recommend that you store your OpenVPN AS password in AWS Parameter Store at least for the initial deployment. 
 
 <p align="center"> 
-<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/prepstep-000-parameter-store-example.jpg" alt="Parameter Store secret string example." height="75%" width="75%">
+<img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/prepstep-000-parameter-store-example.jpg" alt="Parameter Store secure string example." height="75%" width="75%">
 </p>
 
 ### Stack Deployment
@@ -98,7 +98,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-011-cert-warning.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
-12. Congratulations if you see the **Admin Login** page! Enter the username and either the default password of ***ChangeMePlease*** or the password that you saved in the Parameter Store secret string.
+12. Congratulations if you see the **Admin Login** page! Enter the username and either the default password of ***ChangeMePlease*** or the password that you saved in the Parameter Store secure string.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-012-initial-login.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
