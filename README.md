@@ -8,9 +8,9 @@ All regions listed in the [Amazon Web Services EC2 Community Appliance Quick Sta
 
 ## Caveats
 
-While this CloudFormation template will get you started a bit quicker than OpenVPN's Amazon Web Services EC2 Community Appliance Quick Start Guide, depending on what you are trying to accomplish further configuration will probably be required.
+While this CloudFormation template will get you started a bit quicker than OpenVPN's [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/), depending on what you are trying to accomplish further configuration will probably be required.
 
-Also, there are no examples of how to connect to the OpenVPN AS instance after it is deployed so the assumption is that if you are deploying an OpenVPN AS instance you know how to configure and connect a VPN client. 
+Also, I haven't included any examples of how to connect to the OpenVPN AS instance after it is deployed so the assumption is that if you are deploying an OpenVPN AS instance you know how to configure and connect the VPN client. 
 
 Finally, if you are looking to use Let's Encrypt take a look at my other Github project [here.](https://github.com/virtualjj/automated-openvpnas-cloudflare-letsencrypt)
 
@@ -75,7 +75,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-008-stack-launch-success.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
-9. It will be tempting to try logging into the instance and start doing "stuff". Be patient and wait for the instance status checks to complete. Also, if you try logging into the instance too early you'll break the initial ***ovpn-init --ec2*** script which is responsible for unintended setup.
+9. It will be tempting to try logging into the instance and start doing "stuff". Be patient and wait for the instance status checks to complete. Also, if you try logging into the instance too early you'll break the initial ***ovpn-init --ec2*** script which is responsible for unattended setup.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-009-not-ready-status.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
@@ -86,7 +86,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 </p>
 
 
-10. Click on the **Overview** dropdown and select **Outputs**. Click on the hyperlink to have a new tab open that will take you to the OpenVPN AS web Admin Login page. Remember that at this point, even though you might have entered a custom hostname parameter you can only access the Admin Login page by IP address since DNS is not configured yet.
+10. Head back to CloudFormation and click on the **Overview** dropdown and select **Outputs**. Click on the hyperlink to have a new tab open that will take you to the OpenVPN AS web admin Login page. Remember that at this point, even though you might have entered a custom hostname parameter you can only access the Admin Login page by IP address since DNS is not configured yet.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-010-stack-outputs.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
@@ -98,7 +98,7 @@ This stack configures EC2 Systems Manager so you can use the Secret Strings feat
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-011-cert-warning.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
 </p>
 
-12. Congratulations if you see the Admin Login page! Enter the username and either the default password of *ChangeMePlease* or the secret string you configured in AWS Parameter Store.
+12. Congratulations if you see the **Admin Login** page! Enter the username and either the default password of ***ChangeMePlease*** or the password that you saved in the Parameter Store secret string.
 
 <p align="center"> 
 <img src="https://github.com/virtualjj/automated-openvpnas/blob/master/images/readme/deploystep-012-initial-login.jpg" alt="Confirm successful stack launch." height="75%" width="75%">
