@@ -48,7 +48,7 @@ Metadata:
       OpenUse:
         default: Open VPN Access
       OpenVPNASDNSName:
-        default: Public FQDN (OPTIONAL)
+        default: Public FQDN (REQUIRED)
       OpenVPNASAccessIP:
         default: OpenVPN AS Management IP
       OpenVPNASAdminUser:
@@ -74,7 +74,7 @@ Parameters:
     # [\.\-_/#A-Za-z0-9]+ Required for AWS::Logs::LogGroup
     AllowedPattern: "[\\w\\-\\/\\.]*"
   OpenVPNASDNSName:
-    Description: Enter the public DNS name for this instance if you plan registering the public IP with DNS and/or install TLS certificates. Otherwise, remove the default to make the hostname the INTERNAL IP address of the instance.
+    Description: Enter a hostname in FQDN format that you plan to use with DNS.
     Type: String
     Default: vpn.example.com
     # Jesus REGEX can be a pain in the rear. http://rubular.com/ is a good resource if you get stuck. 
@@ -733,7 +733,7 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          apt-get update -y
+          apt -y update && apt -y upgrade
           apt-get -y install python-pip
           pip install awscli
           public_hostname=${OpenVPNASDNSName}
