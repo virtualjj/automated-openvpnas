@@ -8,15 +8,15 @@
 
 ## PURPOSE
 
-This project takes the basic steps maintained at [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) at bit further by automating the entire deployment with a few security tweaks using AWS CloudFormation. This stack also configures VPC Flow Logs and EC2 Systems Manager
+This project takes the basic steps maintained at [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/amazon-ec2-appliance-ami-quick-start-guide/) at bit further by automating the entire deployment with a few security tweaks using AWS CloudFormation. This stack also configures VPC Flow Logs and EC2 Systems Manager
 
 ## SUPPORTED REGIONS
 
-All regions listed in the [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/) are supported.
+All regions listed in the [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/amazon-ec2-appliance-ami-quick-start-guide/) are supported.
 
 ## CAVEATS
 
-While this CloudFormation template will get you started a bit quicker than OpenVPN's [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/), ***depending on what you are trying to accomplish further configuration will probably be required.***
+While this CloudFormation template will get you started a bit quicker than OpenVPN's [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/amazon-ec2-appliance-ami-quick-start-guide/), ***depending on what you are trying to accomplish further configuration will probably be required.***
 
 Also, I haven't included any examples of how to connect to the OpenVPN AS instance after it is deployed so the assumption is that if you are deploying an OpenVPN AS instance you know how to configure and connect the VPN client.
 
