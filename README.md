@@ -16,9 +16,11 @@ All regions listed in the [Amazon Web Services EC2 Community Appliance Quick Sta
 
 ## CAVEATS
 
-While this CloudFormation template will get you started a bit quicker than OpenVPN's [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/), depending on what you are trying to accomplish further configuration will probably be required.
+While this CloudFormation template will get you started a bit quicker than OpenVPN's [Amazon Web Services EC2 Community Appliance Quick Start Guide](https://docs.openvpn.net/how-to-tutorialsguides/virtual-platforms/amazon-ec2-appliance-ami-quick-start-guide/), ***depending on what you are trying to accomplish further configuration will probably be required.***
 
 Also, I haven't included any examples of how to connect to the OpenVPN AS instance after it is deployed so the assumption is that if you are deploying an OpenVPN AS instance you know how to configure and connect the VPN client.
+
+This template configures SSM (EC2 Systems Manager) so technically SSH is not needed. However, it is included for troubleshooting. Feel free to remove SSH once you are confident that everything is working and you are happy with using [AWS Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html). While Run Command eliminates SSH and improves security, usage is a lot different from SSH so make sure you test it out before removing SSH.
 
 Finally, if you are looking to use Let's Encrypt take a look at my other Github project [here.](https://github.com/virtualjj/automated-openvpnas-cloudflare-letsencrypt)
 
